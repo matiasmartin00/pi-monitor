@@ -24,7 +24,7 @@ jobs:
       - name: Extract current version
         id: version
         run: |
-          VERSION=$(curl -s -H "Authorization: Bearer ${{ secrets.GHCR_TOKEN }}" \
+          VERSION=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
           "https://ghcr.io/v2/matiasmartin00/pi-monitor/tags/list" | jq -r '.tags | map(select(test("^[0-9]+\\.[0-9]+$"))) | sort | last')
           
           if [[ "$VERSION" == "null" || -z "$VERSION" ]]; then
