@@ -1,0 +1,49 @@
+name: Build and Publish Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Extract current version
+        id: version
+        run: |
+          VERSION=$(curl -s -H "Authorization: Bearer ${{ secrets.GHCR_TOKEN }}" \
+          "https://ghcr.io/v2/matiasmartin00/pi-monitor/tags/list" | jq -r '.tags | map(select(test("^[0-9]+\\.[0-9]+$"))) | sort | last')
+          
+          if [[ "$VERSION" == "null" || -z "$VERSION" ]]; then
+            NEW_VERSION="1.0"
+          else
+            MAJOR=$(echo $VERSION | cut -d. -f1)
+            MINOR=$(echo $VERSION | cut -d. -f2)
+            NEW_VERSION="$MAJOR.$((MINOR+1))"
+          fi
+
+          echo "New version: $NEW_VERSION"
+          echo "version=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ghcr.io/matiasmartin00/pi-monitor:${{ env.version }} .
+          docker push ghcr.io/matiasmartin00/pi-monitor:${{ env.version }}
+
+      - name: Tag latest
+        run: |
+          docker tag ghcr.io/matiasmartin00/pi-monitor:${{ env.version }} ghcr.io/matiasmartin00/pi-monitor:latest
+          docker push ghcr.io/matiasmartin00/pi-monitor:latest
