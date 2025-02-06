@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	log.Println("Starting pi-monitor")
 	collectors.StartCollectors()
 	http.HandleFunc("/metrics", promhttp.Handler().ServeHTTP)
 	log.Println("Server started on: :8080")
