@@ -24,7 +24,7 @@ jobs:
       - name: Extract current version
         id: version
         run: |
-          VERSION=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          VERSION=$(curl -s -H "Authorization: Bearer ${{ secrets.GHCR_TOKEN }}" \
                             -H "Accept: application/vnd.github+json" \
                             -H "X-GitHub-Api-Version: 2022-11-28" \
           "https://api.github.com/users/matiasmartin00/packages/container/pi-monitor/versions" | jq '[.[].metadata.container.tags[]] | map(select(test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))) | sort | last')
