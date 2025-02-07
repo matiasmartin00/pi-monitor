@@ -18,7 +18,7 @@ ENV HOST_PROC=/host/proc
 #ENV HOST_VAR=/host/var
 #ENV HOST_RUN=/host/run
 #ENV HOST_DEV=/host/dev
-#ENV HOST_ROOT=/
+ENV HOST_ROOT=/host/root
 
 WORKDIR /root/
 

@@ -5,4 +5,5 @@ func StartCollectors() {
 	go collectorMemoryUsage()
 	go collectorUptime()
 	go collectorCpuCores()
+	go collectorDiskUsage()
 }
