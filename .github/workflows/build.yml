@@ -55,7 +55,4 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker buildx build --platform linux/arm64 \ 
-            -t ghcr.io/matiasmartin00/pi-monitor:${{ env.version }} \ 
-            -t ghcr.io/matiasmartin00/pi-monitor:latest \
-            --push .
+          docker buildx build --platform linux/arm64 -t ghcr.io/matiasmartin00/pi-monitor:${{ env.version }} -t ghcr.io/matiasmartin00/pi-monitor:latest --push .
