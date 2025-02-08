@@ -13,7 +13,7 @@ RUN GOARCH=arm64 GOOS=linux go build -o application .
 FROM alpine:3.21
 
 ENV HOST_PROC=/host/proc
-#ENV HOST_SYS=/host/sys
+ENV HOST_SYS=/host/sys
 #ENV HOST_ETC=/host/etc
 #ENV HOST_VAR=/host/var
 #ENV HOST_RUN=/host/run
