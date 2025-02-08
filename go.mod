@@ -18,9 +18,10 @@ require (
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
+	github.com/showwin/speedtest-go v1.7.10 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
 	github.com/tklauser/numcpus v0.8.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/sys v0.22.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 )
