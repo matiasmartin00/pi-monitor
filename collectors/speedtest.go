@@ -56,7 +56,7 @@ func collectorSpeedtest() {
 
 			downloadSpeed.WithLabelValues(server.Name).Set(float64(server.DLSpeed))
 			uploadSpeed.WithLabelValues(server.Name).Set(float64(server.ULSpeed))
-			ping.WithLabelValues(server.Name).Set(float64(server.Latency))
+			ping.WithLabelValues(server.Name).Set(float64(server.Latency.Microseconds()))
 
 			server.Context.Reset()
 		}
