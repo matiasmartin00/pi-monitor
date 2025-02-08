@@ -1,0 +1,16 @@
+metrics:
+  cpu:
+    enabled: true
+    interval: 5s
+  memory:
+    enabled: true
+    interval: 5s
+  disk:
+    enabled: true
+    interval: 5s
+  host:
+    enabled: true
+    interval: 5s
+  speedtest:
+    enabled: true
+    interval: 1h

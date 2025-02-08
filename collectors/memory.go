@@ -4,11 +4,14 @@ import (
 	"log"
 	"time"
 
+	"github.com/matiasmartin00/pi-monitor/config"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/shirou/gopsutil/v3/mem"
 )
 
 var (
+	memoryInterval, _ = time.ParseDuration("5s")
+
 	memoryUsage = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "pi_monitor_memory_usage",
 		Help: "Current memory usage in percentage",
@@ -55,8 +58,20 @@ func init() {
 	prometheus.MustRegister(memorySReclaimable)
 }
 
+func setupMemoryInterval() {
+	if config.Config.Metrics.Memory.Interval != nil {
+		memoryInterval = *config.Config.Metrics.Memory.Interval
+		return
+	}
+	log.Println("Memory interval not set, using default: ", memoryInterval)
+}
+
 func collectorMemoryUsage() {
+	if !config.Config.Metrics.Memory.Enabled {
+		return
+	}
 	for {
+		log.Println("Getting memory usage")
 		v, err := mem.VirtualMemory()
 		if err != nil {
 			log.Println("Error getting memory usage: ", err)
@@ -70,6 +85,6 @@ func collectorMemoryUsage() {
 		memoryBuffers.Set(float64(v.Buffers))
 		memorySReclaimable.Set(float64(v.Sreclaimable))
 
-		time.Sleep(5 * time.Second)
+		time.Sleep(memoryInterval)
 	}
 }

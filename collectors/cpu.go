@@ -8,11 +8,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/matiasmartin00/pi-monitor/config"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/shirou/gopsutil/v3/cpu"
 )
 
 var (
+	cpuInterval, _ = time.ParseDuration("5s")
+
 	cpuUsage = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "pi_monitor_cpu_usage",
 		Help: "Current CPU usage",
@@ -35,20 +38,41 @@ func init() {
 	prometheus.MustRegister(cpuTemp)
 }
 
+func setupCpuInterval() {
+	if config.Config.Metrics.Cpu.Interval != nil {
+		cpuInterval = *config.Config.Metrics.Cpu.Interval
+		return
+	}
+	log.Println("CPU interval not set, using default: ", cpuInterval)
+}
+
 func collectorCpuUsage() {
+	if !config.Config.Metrics.Cpu.Enabled {
+		return
+	}
 	for {
+		log.Println("Getting CPU usage")
 		percentage, err := cpu.Percent(1*time.Second, false)
 		if err != nil {
 			log.Println("Error getting CPU usage: ", err)
 			continue
 		}
+
+		if len(percentage) == 0 {
+			log.Println("No CPU usage data")
+			continue
+		}
 		cpuUsage.Set(percentage[0])
-		time.Sleep(5 * time.Second)
+		time.Sleep(cpuInterval)
 	}
 }
 
 func collectorCpuTemp() {
+	if !config.Config.Metrics.Cpu.Enabled {
+		return
+	}
 	for {
+		log.Println("Getting CPU temperature")
 		sysPath := os.Getenv("HOST_SYS")
 		if sysPath == "" {
 			log.Println("HOST_SYS environment variable not set")
@@ -76,13 +100,17 @@ func collectorCpuTemp() {
 			continue
 		}
 
-		// La temperatura viene en miligrados, hay que dividir por 1000
+		// The temperature is in millidegrees Celsius so we divide by 1000 to get Celsius
 		cpuTemp.Set(temp / 1000.0)
-		time.Sleep(5 * time.Second)
+		time.Sleep(cpuInterval)
 	}
 }
 
 func collectorCpuCores() {
+	if !config.Config.Metrics.Cpu.Enabled {
+		return
+	}
+	log.Println("Getting CPU cores")
 	cores, err := cpu.Counts(true)
 	if err != nil {
 		log.Println("Error getting CPU cores: ", err)

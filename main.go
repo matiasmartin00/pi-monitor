@@ -5,8 +5,13 @@ import (
 	"net/http"
 
 	"github.com/matiasmartin00/pi-monitor/collectors"
+	"github.com/matiasmartin00/pi-monitor/config"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+func init() {
+	config.Load()
+}
 
 func main() {
 	log.Println("Starting pi-monitor")

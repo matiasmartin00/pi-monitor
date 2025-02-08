@@ -4,12 +4,14 @@ import (
 	"log"
 	"time"
 
+	"github.com/matiasmartin00/pi-monitor/config"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/showwin/speedtest-go/speedtest"
 )
 
 var (
-	downloadSpeed = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+	speedtestInterval, _ = time.ParseDuration("1h")
+	downloadSpeed        = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "pi_monitor_speedtest_download",
 		Help: "Current download speed in Mbps",
 	}, []string{"server"})
@@ -31,8 +33,20 @@ func init() {
 	prometheus.MustRegister(ping)
 }
 
+func setupSpeedtestInterval() {
+	if config.Config.Metrics.Speedtest.Interval != nil {
+		speedtestInterval = *config.Config.Metrics.Speedtest.Interval
+		return
+	}
+	log.Println("Speedtest interval not set, using default: ", speedtestInterval)
+}
+
 func collectorSpeedtest() {
+	if !config.Config.Metrics.Speedtest.Enabled {
+		return
+	}
 	for {
+		log.Println("Running speedtest")
 		speedtestClient := speedtest.New()
 		serverList, err := speedtestClient.FetchServers()
 
@@ -61,6 +75,6 @@ func collectorSpeedtest() {
 			server.Context.Reset()
 		}
 
-		time.Sleep(5 * time.Minute)
+		time.Sleep(speedtestInterval)
 	}
 }

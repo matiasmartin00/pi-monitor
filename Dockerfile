@@ -23,6 +23,7 @@ ENV HOST_ROOT=/host/root
 WORKDIR /root/
 
 COPY --from=builder /app/application .
+COPY --from=builder /app/configuration.yml .
 
 EXPOSE 8080
 

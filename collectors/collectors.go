@@ -1,6 +1,11 @@
 package collectors
 
 func StartCollectors() {
+	setupCpuInterval()
+	setupMemoryInterval()
+	setupHostInterval()
+	setupDiskInterval()
+	setupSpeedtestInterval()
 	go collectorCpuUsage()
 	go collectorMemoryUsage()
 	go collectorUptime()
